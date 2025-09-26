@@ -364,7 +364,7 @@ If you find this repository helpful, please consider citing our work:
 @article{fang2025thinkless,
   title={Thinkless: LLM Learns When to Think},
   author={Fang, Gongfan and Ma, Xinyin and Wang, Xinchao},
-  journal={arXiv preprint arXiv:2505.13379},
+  journal={Advances in neural information processing systems},
   year={2025}
 }
 ```
