@@ -93,7 +93,7 @@ bash scripts/eval/eval_all.sh Vinnnf/Thinkless-1.5B-RL-DeepScaleR eval_results/V
 | Math-500   | 0.8193 | 2531 |
 | GSM8k      | 0.8375 |  627 |
 
-The reproduced results closely match the reported numbers in the paper. Across all four benchmarks, the difference in Pass@1 is within approximately 1–2%, and average token counts are nearly identical. This confirms that the performance reported in the paper is reproducible using the released checkpoint and evaluation pipeline.
+The reproduced results closely match the reported numbers in the paper. Across all four benchmarks, the difference in Pass@1 is within approximately 0.01-1.3%, and average token counts are nearly identical. This confirms that the performance reported in the paper is reproducible using the released checkpoint and evaluation pipeline.
 
 ## RL Training
 
