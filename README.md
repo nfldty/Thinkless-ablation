@@ -188,6 +188,31 @@ Our reproducing results using 300 steps with correct_think_reward=0.5, followed 
 |  **Paper** | 0.2733 (100%) | 0.9459 (26%) | 0.8184 (51%) | 0.8418 (13%) |
 | **This Codebase** | 0.2733 (100%) | 0.9483 (23%) | 0.8360 (51%) | 0.8368 (7%) |
 
+### Reproduction Results (This Fork)
+
+We evaluated the released RL model (**Thinkless-1.5B-RL-DeepScaleR**) on the same benchmarks. Results below (Pass@1 and average number of generated tokens):
+
+| Benchmark   | Pass@1 | Avg #Tokens |
+|:-----------|------:|------------:|
+| AIME 2024  |   0.2606   |          7221 |
+| Minerva Algebra | 0.9423 | 1124 |
+| Math-500   | 0.8193 | 2531 |
+| GSM8k      | 0.8375 |  627 |
+
+The reproduced results closely match the reported numbers in the paper. Across all four benchmarks, the difference in Pass@1 is within approximately 1–2%, and average token counts are nearly identical. This confirms that the performance reported in the paper is reproducible using the released checkpoint and evaluation pipeline.
+
+### Ablation: `correct_think_reward=0.9`
+
+We resumed training from a checkpoint and continued for 50 steps with **`correct_think_reward=0.9`** (increased from the default 0.5) to encourage more use of think mode. Results (Pass@1 / Avg #Tokens):
+
+| Benchmark   | Pass@1 | Avg #Tokens |
+|:-----------|------:|------------:|
+| AIME 2024  | 0.2801 | 8587 |
+| Minerva Algebra | 0.9533 | 1586 |
+| Math-500   | 0.8329 | 3004 |
+| GSM8k      | 0.8510 | 1251 |
+
+Higher `correct_think_reward` improves accuracy on AIME, Minerva, and GSM8k at the cost of more tokens (model uses think mode more often).
 
 
 ## TODO List
