@@ -1,0 +1,425 @@
+{
+  "results": {
+    "aime": {
+      "alias": "aime",
+      "exact_match,flexible-extract": 0.23333333333333334,
+      "exact_match_stderr,flexible-extract": 0.07854032324531726
+    },
+    "gsm8k_reasoning": {
+      "alias": "gsm8k_reasoning",
+      "exact_match,strict-match": 0.821076573161486,
+      "exact_match_stderr,strict-match": 0.01055766139290129,
+      "exact_match,flexible-extract": 0.8021228203184231,
+      "exact_match_stderr,flexible-extract": 0.010973889601756328
+    },
+    "math_500": {
+      "alias": "math_500",
+      "exact_match,strict-match": 0.372,
+      "exact_match_stderr,strict-match": 0.0216371979857224
+    },
+    "minerva_algebra": {
+      "alias": "minerva_algebra",
+      "exact_match,strict-match": 0.7388374052232519,
+      "exact_match_stderr,strict-match": 0.012755209029703202
+    }
+  },
+  "group_subtasks": {
+    "aime": [],
+    "gsm8k_reasoning": [],
+    "math_500": [],
+    "minerva_algebra": []
+  },
+  "configs": {
+    "aime": {
+      "task": "aime",
+      "tag": [
+        "chain_of_thought"
+      ],
+      "dataset_path": "HuggingFaceH4/aime_2024",
+      "dataset_name": "default",
+      "test_split": "train",
+      "doc_to_text": "Please reason step by step, and put your final answer within \\boxed{}.\n{{problem}}",
+      "doc_to_target": "{{answer}}",
+      "unsafe_code": false,
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "aggregation": "mean",
+          "higher_is_better": true,
+          "ignore_case": true,
+          "ignore_punctuation": false,
+          "metric": "exact_match",
+          "regexes_to_ignore": [
+            ",",
+            "\\$",
+            "(?s).*#### ",
+            "\\.$"
+          ]
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "until": [
+          "<｜end▁of▁sentence｜>",
+          "<|im_end|>"
+        ],
+        "do_sample": true,
+        "temperature": 0.6,
+        "max_gen_toks": 32768,
+        "top_p": 0.95
+      },
+      "repeats": 1,
+      "filter_list": [
+        {
+          "filter": [
+            {
+              "function": "regex",
+              "group_select": -1,
+              "regex_pattern": "(-?[$0-9.,]{2,})|(-?[0-9]+)"
+            },
+            {
+              "function": "take_first"
+            }
+          ],
+          "name": "flexible-extract"
+        }
+      ],
+      "should_decontaminate": false,
+      "metadata": {
+        "version": 3.0
+      }
+    },
+    "gsm8k_reasoning": {
+      "task": "gsm8k_reasoning",
+      "tag": [
+        "chain_of_thought"
+      ],
+      "dataset_path": "openai/gsm8k",
+      "dataset_name": "main",
+      "test_split": "test",
+      "doc_to_text": "Please reason step by step, and put your final answer within \\boxed{}.\n{{question}}",
+      "doc_to_target": "{{answer.split('####')[-1].strip() if answer is defined else target}}",
+      "unsafe_code": false,
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "fewshot_config": {
+        "sampler": "first_n",
+        "samples": [
+          {
+            "question": "There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done, there will be 21 trees. How many trees did the grove workers plant today?",
+            "target": "There are 15 trees originally. Then there were 21 trees after some more were planted. So there must have been 21 - 15 = 6. \\n\\n**Final Answer**\\n\\n\\[ \\boxed{6} \\]"
+          },
+          {
+            "question": "If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?",
+            "target": "There are originally 3 cars. 2 more cars arrive. 3 + 2 = 5. \\n\\n**Final Answer**\\n\\n\\[ \\boxed{5} \\]"
+          },
+          {
+            "question": "Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?",
+            "target": "Originally, Leah had 32 chocolates. Her sister had 42. So in total they had 32 + 42 = 74. After eating 35, they had 74 - 35 = 39. \\n\\n**Final Answer**\\n\\n\\[ \\boxed{39} \\]"
+          },
+          {
+            "question": "Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?",
+            "target": "Jason started with 20 lollipops. Then he had 12 after giving some to Denny. So he gave Denny 20 - 12 = 8. \\n\\n**Final Answer**\\n\\n\\[ \\boxed{8} \\]"
+          },
+          {
+            "question": "Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does he have now?",
+            "target": "Shawn started with 5 toys. If he got 2 toys each from his mom and dad, then that is 4 more toys. 5 + 4 = 9. \\n\\n**Final Answer**\\n\\n\\[ \\boxed{9} \\]"
+          },
+          {
+            "question": "There were nine computers in the server room. Five more computers were installed each day, from monday to thursday. How many computers are now in the server room?",
+            "target": "There were originally 9 computers. For each of 4 days, 5 more computers were added. So 5 * 4 = 20 computers were added. 9 + 20 is 29. \\n\\n**Final Answer**\\n\\n\\[ \\boxed{29} \\]"
+          },
+          {
+            "question": "Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many golf balls did he have at the end of wednesday?",
+            "target": "Michael started with 58 golf balls. After losing 23 on tuesday, he had 58 - 23 = 35. After losing 2 more, he had 35 - 2 = 33 golf balls. \\n\\n**Final Answer**\\n\\n\\[ \\boxed{33} \\]"
+          },
+          {
+            "question": "Olivia has $23. She bought five bagels for $3 each. How much money does she have left?",
+            "target": "Olivia had 23 dollars. 5 bagels for 3 dollars each will be 5 x 3 = 15 dollars. So she has 23 - 15 dollars left. 23 - 15 is 8. \\n\\n**Final Answer**\\n\\n\\[ \\boxed{8} \\]"
+          }
+        ]
+      },
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "aggregation": "mean",
+          "higher_is_better": true,
+          "ignore_case": true,
+          "ignore_punctuation": false,
+          "metric": "exact_match",
+          "regexes_to_ignore": [
+            ",",
+            "\\$",
+            "(?s).*#### ",
+            "\\.$"
+          ]
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "until": [
+          "<｜end▁of▁sentence｜>",
+          "<|im_end|>"
+        ],
+        "do_sample": true,
+        "temperature": 0.6,
+        "top_p": 0.95,
+        "max_gen_toks": 32768
+      },
+      "repeats": 1,
+      "filter_list": [
+        {
+          "filter": [
+            {
+              "function": "regex",
+              "regex_pattern": "\\\\boxed{(\\-?[0-9\\.\\,]+)}|\\\\boxed{\\\\text{(\\-?[0-9\\.\\,]+)}}|answer is (\\-?[0-9\\.\\,]+)|answer should be (\\-?[0-9\\.\\,]+)"
+            },
+            {
+              "function": "take_first"
+            }
+          ],
+          "name": "strict-match"
+        },
+        {
+          "filter": [
+            {
+              "function": "regex",
+              "group_select": -1,
+              "regex_pattern": "(-?[$0-9.,]{2,})|(-?[0-9]+)"
+            },
+            {
+              "function": "take_first"
+            }
+          ],
+          "name": "flexible-extract"
+        }
+      ],
+      "should_decontaminate": false,
+      "metadata": {
+        "version": 3.0
+      }
+    },
+    "math_500": {
+      "task": "math_500",
+      "tag": [
+        "chain_of_thought"
+      ],
+      "dataset_path": "HuggingFaceH4/MATH-500",
+      "dataset_name": "default",
+      "test_split": "test",
+      "doc_to_text": "Please reason step by step, and put your final answer within \\boxed{}.\n{{problem}}",
+      "doc_to_target": "{{answer}}",
+      "unsafe_code": false,
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "aggregation": "mean",
+          "higher_is_better": true,
+          "ignore_case": true,
+          "ignore_punctuation": false,
+          "metric": "exact_match",
+          "regexes_to_ignore": [
+            ",",
+            "\\$",
+            "(?s).*#### ",
+            "\\.$"
+          ]
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "until": [
+          "<｜end▁of▁sentence｜>",
+          "<|im_end|>"
+        ],
+        "do_sample": true,
+        "temperature": 0.6,
+        "top_p": 0.95,
+        "max_gen_toks": 32768
+      },
+      "repeats": 1,
+      "filter_list": [
+        {
+          "filter": [
+            {
+              "function": "regex",
+              "regex_pattern": "\\\\boxed{(.*?)}|\\\\boxed{\\\\text{(.*?)}}|answer is (.*?)|answer should be (.*?)"
+            },
+            {
+              "function": "take_first"
+            }
+          ],
+          "name": "strict-match"
+        }
+      ],
+      "should_decontaminate": false,
+      "metadata": {
+        "version": 3.0
+      }
+    },
+    "minerva_algebra": {
+      "task": "minerva_algebra",
+      "tag": [
+        "math_word_problems"
+      ],
+      "dataset_path": "EleutherAI/hendrycks_math",
+      "dataset_name": "algebra",
+      "dataset_kwargs": {
+        "trust_remote_code": true
+      },
+      "training_split": "train",
+      "test_split": "test",
+      "process_docs": "def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:\n    def _process_doc(doc: dict) -> dict:\n        out_doc = {\n            \"problem\": doc[\"problem\"],\n            \"solution\": doc[\"solution\"],\n            \"answer\": normalize_final_answer(\n                remove_boxed(last_boxed_only_string(doc[\"solution\"]))\n            ),\n        }\n        if getattr(doc, \"few_shot\", None) is not None:\n            out_doc[\"few_shot\"] = True\n        return out_doc\n\n    return dataset.map(_process_doc)\n",
+      "doc_to_text": "def doc_to_text(doc: dict) -> str:\n    problem = doc[\"problem\"]\n    instruct = \"Please reason step by step, and put your final answer within \\\\boxed{}\"\n    return f\"{instruct}\\n{problem}\"\n",
+      "doc_to_target": "{{answer if few_shot is undefined else solution}}",
+      "unsafe_code": false,
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "fewshot_config": {
+        "sampler": "first_n",
+        "samples": "<function list_fewshot_samples at 0x7b5b96133f40>"
+      },
+      "num_fewshot": 0,
+      "metric_list": [
+        {
+          "metric": "exact_match",
+          "aggregation": "mean",
+          "higher_is_better": true
+        }
+      ],
+      "output_type": "generate_until",
+      "generation_kwargs": {
+        "until": [
+          "<｜end▁of▁sentence｜>",
+          "<|im_end|>"
+        ],
+        "do_sample": true,
+        "temperature": 0.6,
+        "max_gen_toks": 32768,
+        "top_p": 0.95
+      },
+      "repeats": 1,
+      "filter_list": [
+        {
+          "filter": [
+            {
+              "function": "regex",
+              "regex_pattern": "\\\\boxed{(.*?)}"
+            },
+            {
+              "function": "take_first"
+            }
+          ],
+          "name": "strict-match"
+        }
+      ],
+      "should_decontaminate": false,
+      "metadata": {
+        "version": 2.0
+      }
+    }
+  },
+  "versions": {
+    "aime": 3.0,
+    "gsm8k_reasoning": 3.0,
+    "math_500": 3.0,
+    "minerva_algebra": 2.0
+  },
+  "n-shot": {
+    "aime": 0,
+    "gsm8k_reasoning": 0,
+    "math_500": 0,
+    "minerva_algebra": 0
+  },
+  "higher_is_better": {
+    "aime": {
+      "exact_match": true
+    },
+    "gsm8k_reasoning": {
+      "exact_match": true
+    },
+    "math_500": {
+      "exact_match": true
+    },
+    "minerva_algebra": {
+      "exact_match": true
+    }
+  },
+  "n-samples": {
+    "minerva_algebra": {
+      "original": 1187,
+      "effective": 1187
+    },
+    "math_500": {
+      "original": 500,
+      "effective": 500
+    },
+    "gsm8k_reasoning": {
+      "original": 1319,
+      "effective": 1319
+    },
+    "aime": {
+      "original": 30,
+      "effective": 30
+    }
+  },
+  "config": {
+    "model": "vllm",
+    "model_args": "pretrained=Vinnnf/Thinkless-1.5B-RL-DeepScaleR,tensor_parallel_size=1,dtype=auto,gpu_memory_utilization=0.9,data_parallel_size=1,seed=2",
+    "batch_size": "auto",
+    "batch_sizes": [],
+    "device": null,
+    "use_cache": null,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "gen_kwargs": null,
+    "random_seed": 2,
+    "numpy_seed": 2,
+    "torch_seed": 2,
+    "fewshot_seed": 2
+  },
+  "git_hash": "55817cb",
+  "date": 1770770849.695627,
+  "pretty_env_info": "PyTorch version: 2.4.0+cu121\nIs debug build: False\nCUDA used to build PyTorch: 12.1\nROCM used to build PyTorch: N/A\n\nOS: Ubuntu 22.04.5 LTS (x86_64)\nGCC version: (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0\nClang version: Could not collect\nCMake version: Could not collect\nLibc version: glibc-2.35\n\nPython version: 3.10.0 (default, Mar  3 2022, 09:58:08) [GCC 7.5.0] (64-bit runtime)\nPython platform: Linux-6.8.0-58-generic-x86_64-with-glibc2.35\nIs CUDA available: True\nCUDA runtime version: 12.4.131\nCUDA_MODULE_LOADING set to: LAZY\nGPU models and configuration: GPU 0: NVIDIA A40\nNvidia driver version: 580.126.09\ncuDNN version: Could not collect\nHIP runtime version: N/A\nMIOpen runtime version: N/A\nIs XNNPACK available: True\n\nCPU:\nArchitecture:                         x86_64\nCPU op-mode(s):                       32-bit, 64-bit\nAddress sizes:                        52 bits physical, 57 bits virtual\nByte Order:                           Little Endian\nCPU(s):                               96\nOn-line CPU(s) list:                  0-95\nVendor ID:                            GenuineIntel\nModel name:                           Intel(R) Xeon(R) Gold 6342 CPU @ 2.80GHz\nCPU family:                           6\nModel:                                106\nThread(s) per core:                   2\nCore(s) per socket:                   24\nSocket(s):                            2\nStepping:                             6\nCPU max MHz:                          3500.0000\nCPU min MHz:                          800.0000\nBogoMIPS:                             5600.00\nFlags:                                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l3 ssbd mba ibrs ibpb stibp ibrs_enhanced tpr_shadow flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local split_lock_detect wbnoinvd dtherm ida arat pln pts vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq la57 rdpid fsrm md_clear pconfig flush_l1d arch_capabilities\nVirtualization:                       VT-x\nL1d cache:                            2.3 MiB (48 instances)\nL1i cache:                            1.5 MiB (48 instances)\nL2 cache:                             60 MiB (48 instances)\nL3 cache:                             72 MiB (2 instances)\nNUMA node(s):                         2\nNUMA node0 CPU(s):                    0-23,48-71\nNUMA node1 CPU(s):                    24-47,72-95\nVulnerability Gather data sampling:   Mitigation; Microcode\nVulnerability Itlb multihit:          Not affected\nVulnerability L1tf:                   Not affected\nVulnerability Mds:                    Not affected\nVulnerability Meltdown:               Not affected\nVulnerability Mmio stale data:        Mitigation; Clear CPU buffers; SMT vulnerable\nVulnerability Reg file data sampling: Not affected\nVulnerability Retbleed:               Not affected\nVulnerability Spec rstack overflow:   Not affected\nVulnerability Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:             Mitigation; Enhanced / Automatic IBRS; IBPB conditional; RSB filling; PBRSB-eIBRS SW sequence; BHI SW loop, KVM SW loop\nVulnerability Srbds:                  Not affected\nVulnerability Tsx async abort:        Not affected\n\nVersions of relevant libraries:\n[pip3] numpy==1.26.4\n[pip3] torch==2.4.0\n[pip3] torchvision==0.19.0\n[pip3] triton==3.0.0\n[conda] numpy                                1.26.4           pypi_0           pypi\n[conda] torch                                2.4.0            pypi_0           pypi\n[conda] torchvision                          0.19.0           pypi_0           pypi\n[conda] triton                               3.0.0            pypi_0           pypi",
+  "transformers_version": "4.47.1",
+  "upper_git_hash": null,
+  "tokenizer_pad_token": [
+    "<|EOT|>",
+    "151647"
+  ],
+  "tokenizer_eos_token": [
+    "<｜end▁of▁sentence｜>",
+    "151643"
+  ],
+  "tokenizer_bos_token": [
+    "<｜begin▁of▁sentence｜>",
+    "151646"
+  ],
+  "eot_token_id": 151643,
+  "max_length": 32768,
+  "task_hashes": {
+    "minerva_algebra": "9c15d3950ea89a18d077d035aa4d9dbd2c40fa891fb6f968b00eefec9746e5cd",
+    "math_500": "635044b7837b5852cad082eede8bf12a9ec8e984fa846849875ed8b4f5eea24d",
+    "gsm8k_reasoning": "98e6f5c23667bb1967fa34589ccb31598df0cdb6f5c19763d61f300c54b090d2",
+    "aime": "3f7c011da4b94b8e92503b7e5861e6ec3c5a61c3bae67c955a11e12c46ef19fe"
+  },
+  "model_source": "vllm",
+  "model_name": "Vinnnf/Thinkless-1.5B-RL-DeepScaleR",
+  "model_name_sanitized": "Vinnnf__Thinkless-1.5B-RL-DeepScaleR",
+  "system_instruction": null,
+  "system_instruction_sha": null,
+  "fewshot_as_multiturn": false,
+  "chat_template": "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% set ns = namespace(is_first=false, is_tool=false, is_output_first=true, system_prompt='') %}{%- for message in messages %}{%- if message['role'] == 'system' %}{% set ns.system_prompt = message['content'] %}{%- endif %}{%- endfor %}{{bos_token}}{{ns.system_prompt}}{%- for message in messages %}{%- if message['role'] == 'user' %}{%- set ns.is_tool = false -%}{{'<｜User｜>' + message['content']}}{%- endif %}{%- if message['role'] == 'assistant' and message['content'] is none %}{%- set ns.is_tool = false -%}{%- for tool in message['tool_calls']%}{%- if not ns.is_first %}{{'<｜Assistant｜><｜tool▁calls▁begin｜><｜tool▁call▁begin｜>' + tool['type'] + '<｜tool▁sep｜>' + tool['function']['name'] + '\\n' + '```json' + '\\n' + tool['function']['arguments'] + '\\n' + '```' + '<｜tool▁call▁end｜>'}}{%- set ns.is_first = true -%}{%- else %}{{'\\n' + '<｜tool▁call▁begin｜>' + tool['type'] + '<｜tool▁sep｜>' + tool['function']['name'] + '\\n' + '```json' + '\\n' + tool['function']['arguments'] + '\\n' + '```' + '<｜tool▁call▁end｜>'}}{{'<｜tool▁calls▁end｜><｜end▁of▁sentence｜>'}}{%- endif %}{%- endfor %}{%- endif %}{%- if message['role'] == 'assistant' and message['content'] is not none %}{%- if ns.is_tool %}{{'<｜tool▁outputs▁end｜>' + message['content'] + '<｜end▁of▁sentence｜>'}}{%- set ns.is_tool = false -%}{%- else %}{% set content = message['content'] %}{% if '</think>' in content %}{% set content = content %}{% endif %}{{'<｜Assistant｜>' + content + '<｜end▁of▁sentence｜>'}}{%- endif %}{%- endif %}{%- if message['role'] == 'tool' %}{%- set ns.is_tool = true -%}{%- if ns.is_output_first %}{{'<｜tool▁outputs▁begin｜><｜tool▁output▁begin｜>' + message['content'] + '<｜tool▁output▁end｜>'}}{%- set ns.is_output_first = false %}{%- else %}{{'\\n<｜tool▁output▁begin｜>' + message['content'] + '<｜tool▁output▁end｜>'}}{%- endif %}{%- endif %}{%- endfor -%}{% if ns.is_tool %}{{'<｜tool▁outputs▁end｜>'}}{% endif %}{% if add_generation_prompt and not ns.is_tool %}{{'<｜Assistant｜>'}}{% endif %}",
+  "chat_template_sha": "234677857554f0772a93375e9d5093f3308b017fa45cc185392f2e4dcbc5ed83",
+  "start_time": 437841.067388133,
+  "end_time": 439196.45726419,
+  "total_evaluation_time_seconds": "1355.3898760570446"
+}
